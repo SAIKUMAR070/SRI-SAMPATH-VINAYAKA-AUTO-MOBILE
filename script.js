@@ -10,6 +10,9 @@ function setLanguage(language) {
   document.querySelectorAll("[data-en][data-te]").forEach((element) => {
     element.innerHTML = element.dataset[isTelugu ? "te" : "en"];
   });
+  document.querySelectorAll("[data-placeholder-en][data-placeholder-te]").forEach((element) => {
+    element.placeholder = element.dataset[isTelugu ? "placeholderTe" : "placeholderEn"];
+  });
 
   languageToggle.textContent = isTelugu ? "English" : "తెలుగు";
   languageToggle.setAttribute(
@@ -17,6 +20,7 @@ function setLanguage(language) {
     isTelugu ? "Switch language to English" : "భాషను తెలుగుకు మార్చండి"
   );
   localStorage.setItem("svaw-language", language);
+  window.dispatchEvent(new Event("languagechange"));
 }
 
 languageToggle.addEventListener("click", () => {

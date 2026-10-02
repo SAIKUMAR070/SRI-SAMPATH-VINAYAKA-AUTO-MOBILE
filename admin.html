@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101c2b">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Owner dashboard | Sri Sampath Vinayaka Auto Mobile Works</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+  <script src="config.js"></script>
+  <script src="admin.js" defer></script>
+</head>
+<body class="admin-page">
+  <header class="admin-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none"><path d="M10 29.5h28l-2.4-9.2a4 4 0 0 0-3.9-3H16.3a4 4 0 0 0-3.9 3L10 29.5Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M8 29.5h32v6a2 2 0 0 1-2 2h-2v-4H12v4h-2a2 2 0 0 1-2-2v-6Z" fill="currentColor"/><path d="M16 24h16M14 29.5l2.5-4M34 29.5l-2.5-4" stroke="#101c2b" stroke-width="2" stroke-linecap="round"/></svg>
+      </span>
+      <span class="brand-copy"><strong>SRI SAMPATH VINAYAKA</strong><span>AUTO MOBILE WORKS</span></span>
+    </a>
+    <a class="admin-back-link" href="index.html" data-en="← View shop website" data-te="← షాప్ వెబ్‌సైట్ చూడండి">← View shop website</a>
+  </header>
+  <main class="admin-main">
+    <section class="admin-login-card" id="admin-login-panel">
+      <span class="section-kicker">OWNER ACCESS</span>
+      <h1>Manage your shop</h1>
+      <p>Sign in to update products and stock or check customer requests.</p>
+      <form id="admin-login-form" class="admin-form">
+        <label>Email address<input name="email" type="email" autocomplete="username" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" minlength="8" required></label>
+        <button class="button button-primary" id="admin-login-button" type="submit">Sign in</button>
+      </form>
+      <p class="admin-message" id="admin-login-message" role="status" aria-live="polite"></p>
+      <p class="admin-setup-note" id="admin-config-message">The shop database still needs to be connected. Ask the person setting up your website to finish the Supabase setup before signing in.</p>
+    </section>
+
+    <section class="admin-dashboard hidden" id="admin-dashboard">
+      <div class="dashboard-heading">
+        <div>
+          <span class="section-kicker">PRIVATE SHOP DASHBOARD</span>
+          <h1>Products &amp; requests</h1>
+          <p id="admin-welcome"></p>
+        </div>
+        <button class="button button-secondary" id="admin-logout" type="button">Sign out</button>
+      </div>
+      <p class="admin-message" id="dashboard-message" role="status" aria-live="polite"></p>
+      <div class="admin-grid">
+        <section class="admin-card">
+          <div class="admin-card-heading">
+            <div><span class="section-kicker">EDIT FROM YOUR PHONE</span><h2 id="product-form-title">Add a product</h2></div>
+          </div>
+          <form id="product-form" class="admin-form product-admin-form">
+            <input name="product_id" type="hidden">
+            <label>Product name<input name="name" maxlength="120" required placeholder="e.g. 10W-30 engine oil"></label>
+            <label>Category
+              <select name="category" required>
+                <option value="">Choose category</option>
+                <option>Engine oil</option><option>Hydraulic oil</option><option>Two-wheeler spare parts</option><option>Car spare parts</option><option>Accessories</option><option>Other</option>
+              </select>
+            </label>
+            <div class="admin-form-row">
+              <label>Brand (optional)<input name="brand" maxlength="80"></label>
+              <label>Vehicle fit (optional)<input name="vehicle_fit" maxlength="120" placeholder="e.g. Honda Activa"></label>
+            </div>
+            <div class="admin-form-row">
+              <label>Price in ₹ (optional)<input name="price" type="number" min="0" step="0.01" inputmode="decimal"></label>
+              <label>Units in stock<input name="stock_quantity" type="number" min="0" max="100000" step="1" value="0" inputmode="numeric" required></label>
+            </div>
+            <label>Part number / SKU (optional)<input name="sku" maxlength="80"></label>
+            <label>Short details (optional)<textarea name="description" rows="3" maxlength="1000"></textarea></label>
+            <label class="photo-field">Take or choose a product photo<input name="image" type="file" accept="image/jpeg,image/png,image/webp" capture="environment"><small>JPG, PNG or WebP. Photos are resized before upload.</small></label>
+            <label class="publish-field"><input name="is_published" type="checkbox" checked><span>Show this product in the public shop catalogue</span></label>
+            <div class="admin-form-actions">
+              <button class="button button-primary" id="product-save" type="submit">Save product</button>
+              <button class="button button-secondary" id="product-cancel" type="button">Clear form</button>
+            </div>
+            <p class="admin-message" id="product-form-message" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+        <section class="admin-card inventory-card">
+          <div class="admin-card-heading"><div><span class="section-kicker">YOUR CATALOGUE</span><h2>Products</h2></div><button class="small-action" id="products-refresh" type="button">Refresh</button></div>
+          <div class="inventory-list" id="inventory-list"><p class="admin-empty">Sign in to load your products.</p></div>
+        </section>
+      </div>
+      <section class="admin-card order-admin-card">
+        <div class="admin-card-heading"><div><span class="section-kicker">CUSTOMER ENQUIRIES</span><h2>Order requests</h2></div><button class="small-action" id="orders-refresh" type="button">Refresh</button></div>
+        <div class="order-admin-list" id="order-admin-list"><p class="admin-empty">Sign in to load customer requests.</p></div>
+      </section>
+      <p class="admin-security-note">Keep your sign-in private. This page never uses a Supabase service-role key.</p>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const savedLanguage = localStorage.getItem("svaw-language");
+      if (savedLanguage === "te") {
+        document.documentElement.lang = "te";
+        document.body.classList.add("telugu");
+        document.querySelectorAll("[data-en][data-te]").forEach((element) => {
+          element.innerHTML = element.dataset.te;
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
