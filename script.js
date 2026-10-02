@@ -39,6 +39,15 @@ menuToggle.addEventListener("click", () => {
   menuToggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !navigation.classList.contains("open")) return;
+
+  navigation.classList.remove("open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.setAttribute("aria-label", "Open navigation");
+  menuToggle.focus();
+});
+
 navigation.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", () => {
     navigation.classList.remove("open");
