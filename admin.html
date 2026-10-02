@@ -86,6 +86,31 @@
           <div class="inventory-list" id="inventory-list"><p class="admin-empty">Sign in to load your products.</p></div>
         </section>
       </div>
+      <section class="admin-card background-admin-card">
+        <div class="admin-card-heading">
+          <div><span class="section-kicker">SHOP WEBSITE</span><h2>Hero background photo</h2></div>
+        </div>
+        <p class="background-help">Upload a wide shop photo for the top of your website. Adjust the crop preview, then save it.</p>
+        <label class="photo-field background-photo-field">Choose a background photo
+          <input id="background-photo" type="file" accept="image/jpeg,image/png,image/webp">
+          <small>JPG, PNG or WebP, up to 20 MB. The crop preview is 16:9.</small>
+        </label>
+        <div id="background-crop-controls" class="background-crop-controls hidden">
+          <div class="background-preview-frame"><img id="background-preview-image" alt="Preview of the selected hero background crop"></div>
+          <div class="background-crop-slider">
+            <label for="background-crop-x">Horizontal crop</label>
+            <input id="background-crop-x" type="range" min="0" max="100" value="50">
+          </div>
+          <div class="background-crop-slider">
+            <label for="background-crop-y">Vertical crop</label>
+            <input id="background-crop-y" type="range" min="0" max="100" value="50">
+          </div>
+        </div>
+        <div class="admin-form-actions background-actions">
+          <button class="button button-primary" id="background-save" type="button" disabled>Save background photo</button>
+        </div>
+        <p class="admin-message" id="background-message" role="status" aria-live="polite">No photo selected.</p>
+      </section>
       <section class="admin-card order-admin-card">
         <div class="admin-card-heading"><div><span class="section-kicker">CUSTOMER ENQUIRIES</span><h2>Order requests</h2></div><button class="small-action" id="orders-refresh" type="button">Refresh</button></div>
         <div class="order-admin-list" id="order-admin-list"><p class="admin-empty">Sign in to load customer requests.</p></div>

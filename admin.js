@@ -13,8 +13,17 @@
   const productFormMessage = document.querySelector("#product-form-message");
   const inventoryList = document.querySelector("#inventory-list");
   const orderList = document.querySelector("#order-admin-list");
+  const backgroundPhoto = document.querySelector("#background-photo");
+  const backgroundMessage = document.querySelector("#background-message");
+  const backgroundSave = document.querySelector("#background-save");
+  const backgroundCropControls = document.querySelector("#background-crop-controls");
+  const backgroundPreview = document.querySelector("#background-preview-image");
+  const backgroundCropX = document.querySelector("#background-crop-x");
+  const backgroundCropY = document.querySelector("#background-crop-y");
   const products = new Map();
   let accessToken = "";
+  let backgroundFile = null;
+  let backgroundPreviewUrl = "";
 
   function isConfigured() {
     return typeof config.supabaseUrl === "string"
@@ -223,6 +232,137 @@
     return path;
   }
 
+  function updateBackgroundPreview() {
+    backgroundPreview.style.objectPosition = `${backgroundCropX.value}% ${backgroundCropY.value}%`;
+  }
+
+  async function loadBackgroundStatus() {
+    try {
+      const settings = await apiRequest("/rest/v1/site_settings?select=value&key=eq.hero_background_path&limit=1");
+      setMessage(backgroundMessage, settings[0]?.value
+        ? "A background photo is saved. Choose a new photo to replace it."
+        : "No background photo is saved yet.");
+    } catch (error) {
+      setMessage(backgroundMessage, `Background settings are not ready: ${error.message}. Follow the website setup guide to enable them.`, "error");
+    }
+  }
+
+  function showBackgroundSelection(file) {
+    backgroundFile = null;
+    backgroundSave.disabled = true;
+    backgroundCropControls.classList.add("hidden");
+    if (backgroundPreviewUrl) URL.revokeObjectURL(backgroundPreviewUrl);
+    backgroundPreviewUrl = "";
+
+    if (!file) {
+      setMessage(backgroundMessage, "No photo selected.");
+      return;
+    }
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setMessage(backgroundMessage, "Choose a JPG, PNG or WebP photo.", "error");
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      setMessage(backgroundMessage, "Choose a photo smaller than 20 MB.", "error");
+      return;
+    }
+
+    backgroundFile = file;
+    backgroundPreviewUrl = URL.createObjectURL(file);
+    backgroundPreview.src = backgroundPreviewUrl;
+    backgroundPreview.onload = () => {
+      const isLandscape = backgroundPreview.naturalWidth / backgroundPreview.naturalHeight > 16 / 9;
+      backgroundCropX.disabled = !isLandscape;
+      backgroundCropY.disabled = isLandscape;
+      backgroundCropControls.classList.remove("hidden");
+      backgroundSave.disabled = false;
+      updateBackgroundPreview();
+      setMessage(backgroundMessage, "Adjust the crop preview, then save the background photo.");
+    };
+    backgroundPreview.onerror = () => {
+      backgroundFile = null;
+      backgroundSave.disabled = true;
+      setMessage(backgroundMessage, "This photo could not be previewed. Choose another image.", "error");
+    };
+  }
+
+  async function createBackgroundPhoto(file) {
+    if (typeof createImageBitmap !== "function") {
+      throw new Error("This browser cannot prepare the photo. Try a recent browser.");
+    }
+
+    const bitmap = await createImageBitmap(file);
+    try {
+      const targetWidth = 1600;
+      const targetHeight = 900;
+      const targetRatio = targetWidth / targetHeight;
+      let sourceX = 0;
+      let sourceY = 0;
+      let sourceWidth = bitmap.width;
+      let sourceHeight = bitmap.height;
+
+      if (bitmap.width / bitmap.height > targetRatio) {
+        sourceWidth = bitmap.height * targetRatio;
+        sourceX = (bitmap.width - sourceWidth) * Number(backgroundCropX.value) / 100;
+      } else {
+        sourceHeight = bitmap.width / targetRatio;
+        sourceY = (bitmap.height - sourceHeight) * Number(backgroundCropY.value) / 100;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("The photo could not be prepared in this browser.");
+      context.drawImage(bitmap, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, targetWidth, targetHeight);
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.84));
+      if (!blob) throw new Error("The cropped photo could not be compressed.");
+      if (blob.size > 5 * 1024 * 1024) throw new Error("The compressed photo is still larger than 5 MB. Choose a smaller image.");
+      return blob;
+    } finally {
+      bitmap.close();
+    }
+  }
+
+  async function saveBackground() {
+    if (!backgroundFile) {
+      setMessage(backgroundMessage, "Choose a background photo first.", "error");
+      return;
+    }
+    backgroundSave.disabled = true;
+    backgroundPhoto.disabled = true;
+    setMessage(backgroundMessage, "Cropping and uploading the background photo…");
+    try {
+      const photo = await createBackgroundPhoto(backgroundFile);
+      const path = `site-backgrounds/${crypto.randomUUID()}.jpg`;
+      const bucket = encodeURIComponent(config.productImageBucket || "product-images");
+      const encodedPath = path.split("/").map((part) => encodeURIComponent(part)).join("/");
+      const uploadResponse = await fetch(apiUrl(`/storage/v1/object/${bucket}/${encodedPath}`), {
+        method: "POST",
+        headers: { ...headers(), "Content-Type": "image/jpeg", "x-upsert": "false" },
+        body: photo
+      });
+      if (!uploadResponse.ok) throw new Error(`Photo upload failed: ${await errorMessage(uploadResponse)}`);
+
+      await apiRequest("/rest/v1/site_settings?on_conflict=key", {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+        body: JSON.stringify({ key: "hero_background_path", value: path })
+      });
+      backgroundFile = null;
+      backgroundPhoto.value = "";
+      backgroundCropControls.classList.add("hidden");
+      if (backgroundPreviewUrl) URL.revokeObjectURL(backgroundPreviewUrl);
+      backgroundPreviewUrl = "";
+      setMessage(backgroundMessage, "Background photo saved. Refresh the shop website to see it.", "success");
+    } catch (error) {
+      setMessage(backgroundMessage, `Couldn’t save the background photo: ${error.message}`, "error");
+    } finally {
+      backgroundPhoto.disabled = false;
+      backgroundSave.disabled = !backgroundFile;
+    }
+  }
+
   function setFormValue(name, value) {
     const field = productForm.elements.namedItem(name);
     if (field) field.value = value ?? "";
@@ -351,6 +491,7 @@
       loginPanel.classList.add("hidden");
       dashboard.classList.remove("hidden");
       await refreshDashboard();
+      await loadBackgroundStatus();
     } catch (error) {
       setMessage(loginMessage, `Sign-in failed: ${error.message}`, "error");
     } finally {
@@ -389,6 +530,10 @@
   document.querySelector("#products-refresh").addEventListener("click", refreshDashboard);
   document.querySelector("#orders-refresh").addEventListener("click", refreshDashboard);
   document.querySelector("#admin-logout").addEventListener("click", signOut);
+  backgroundPhoto.addEventListener("change", () => showBackgroundSelection(backgroundPhoto.files[0]));
+  backgroundCropX.addEventListener("input", updateBackgroundPreview);
+  backgroundCropY.addEventListener("input", updateBackgroundPreview);
+  backgroundSave.addEventListener("click", saveBackground);
 
   if (!isConfigured()) {
     configMessage.textContent = "The database is not connected yet. Follow SUPABASE-SETUP.md to connect it before signing in.";

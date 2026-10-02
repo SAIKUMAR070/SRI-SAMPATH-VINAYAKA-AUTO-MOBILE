@@ -24,11 +24,53 @@ The customer catalogue, saved order requests and owner dashboard need a Supabase
 
 4. Visit `admin.html` on the published website and sign in with that email and password. The owner account is the only account authorized by default.
 
-The owner dashboard can add, edit, publish and hide products, update stock, take or choose product photos on a phone, and review or update request statuses. Photos are resized in the browser before upload.
+The owner dashboard can add, edit, publish and hide products, update stock, take or choose product photos on a phone, and review or update request statuses. Product photos are resized in the browser before upload.
+
+### Enable the website background photo
+
+Run this once in the Supabase **SQL Editor**. It lets the public website read the selected background path and limits background uploads to signed-in shop admins. The uploaded background photo is cropped to a wide 16:9 image in the owner dashboard.
+
+```sql
+create table if not exists public.site_settings (
+  key text primary key,
+  value text not null
+);
+
+alter table public.site_settings enable row level security;
+grant select on public.site_settings to anon, authenticated;
+grant insert, update on public.site_settings to authenticated;
+
+drop policy if exists "Public can read site settings" on public.site_settings;
+create policy "Public can read site settings"
+  on public.site_settings for select
+  using (true);
+
+drop policy if exists "Store admins can add site settings" on public.site_settings;
+create policy "Store admins can add site settings"
+  on public.site_settings for insert to authenticated
+  with check (public.is_store_admin());
+
+drop policy if exists "Store admins can update site settings" on public.site_settings;
+create policy "Store admins can update site settings"
+  on public.site_settings for update to authenticated
+  using (public.is_store_admin())
+  with check (public.is_store_admin());
+
+drop policy if exists "Store admins can upload website backgrounds" on storage.objects;
+create policy "Store admins can upload website backgrounds"
+  on storage.objects for insert to authenticated
+  with check (
+    bucket_id = 'product-images'
+    and (storage.foldername(name))[1] = 'site-backgrounds'
+    and public.is_store_admin()
+  );
+```
+
+The `product-images` storage bucket must be public for the website to display its photos. In `admin.html`, sign in, choose **Hero background photo**, adjust the crop, and save. Refresh the public website after saving.
 
 ## 3. Publish the files
 
-Upload the website files and folders to the top level of the GitHub Pages repository, then commit the changes. Include `config.js`, `catalogue.js`, `admin.html`, `admin.js`, `admin.css`, the `images` folder, and the `supabase` folder, as well as the updated `index.html`, `styles.css` and `script.js`.
+Upload the website files and folders to the top level of the GitHub Pages repository, then commit the changes. Include `config.js`, `catalogue.js`, `site-background.js`, `admin.html`, `admin.js`, `admin.css`, the `images` folder, and the `supabase` folder, as well as the updated `index.html`, `styles.css` and `script.js`.
 
 After deployment, open the public site and check the product catalogue. To manage it, open the site's `admin.html` page or choose **Owner sign in** in the footer.
 

@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="config.js"></script>
+  <script src="site-background.js" defer></script>
   <script src="script.js" defer></script>
   <script src="catalogue.js" defer></script>
 </head>
@@ -77,56 +78,15 @@
           </div>
         </div>
 
-        <div class="hero-art" aria-label="Illustration of vehicle oil and tools">
-          <div class="art-orbit orbit-one"></div>
-          <div class="art-orbit orbit-two"></div>
-          <div class="art-label label-top"><span class="label-dot"></span><span data-en="READY FOR THE ROAD" data-te="ప్రయాణానికి సిద్ధం">READY FOR THE ROAD</span></div>
-          <svg class="workshop-illustration" viewBox="0 0 560 480" role="img" aria-labelledby="illustration-title">
-            <title id="illustration-title">Vehicle, oil can and workshop tools</title>
-            <ellipse cx="278" cy="418" rx="218" ry="23" fill="#07111d" opacity=".28"/>
-            <circle cx="280" cy="234" r="184" fill="#1b2b3c"/>
-            <circle cx="280" cy="234" r="148" fill="#21374b"/>
-            <circle cx="280" cy="234" r="120" fill="#263f55"/>
-            <path d="M113 289h310l-23-70a28 28 0 0 0-26-19H185a28 28 0 0 0-26 19l-46 70Z" fill="#f5b544"/>
-            <path d="M104 286h328v61c0 11-9 20-20 20H124c-11 0-20-9-20-20v-61Z" fill="#f2a927"/>
-            <path d="M180 214h158c9 0 17 5 21 13l19 44H145l19-44c3-8 9-13 16-13Z" fill="#172738"/>
-            <path d="M190 222h60v41h-82l12-29c2-7 5-12 10-12ZM261 222h76c4 0 8 3 10 7l14 34H261v-41Z" fill="#96c9d1"/>
-            <path d="M261 222v41" stroke="#f2a927" stroke-width="5"/>
-            <path d="M102 289h331v32H102z" fill="#e99717"/>
-            <rect x="124" y="293" width="61" height="12" rx="6" fill="#fff1c9"/>
-            <rect x="350" y="293" width="61" height="12" rx="6" fill="#fff1c9"/>
-            <circle cx="169" cy="351" r="36" fill="#0b1420"/>
-            <circle cx="169" cy="351" r="18" fill="#c5d0d2"/>
-            <circle cx="169" cy="351" r="7" fill="#25394b"/>
-            <circle cx="366" cy="351" r="36" fill="#0b1420"/>
-            <circle cx="366" cy="351" r="18" fill="#c5d0d2"/>
-            <circle cx="366" cy="351" r="7" fill="#25394b"/>
-            <g transform="translate(385 112) rotate(8)">
-              <path d="M17 22h70l12 20v112H5V42l12-20Z" fill="#ed5c3e"/>
-              <rect x="17" y="10" width="43" height="17" rx="4" fill="#ffc56b"/>
-              <path d="M29 10V2h24v8" fill="none" stroke="#ffc56b" stroke-width="7" stroke-linejoin="round"/>
-              <path d="M15 65h75v49H15z" fill="#fff3df"/>
-              <path d="m48 74-11 19h11l-5 13 20-23H51l6-9h-9Z" fill="#ed5c3e"/>
-              <text x="52" y="132" fill="#fff3df" font-family="Arial,sans-serif" font-size="9" font-weight="700" text-anchor="middle">ENGINE OIL</text>
-            </g>
-            <g transform="translate(75 138) rotate(-13)">
-              <path d="M27 0h14v117H27z" fill="#c6d2d3"/>
-              <path d="m16 15 17-18 19 18-9 10H25l-9-10Z" fill="#d9e1df"/>
-              <path d="M18 112h32v13H18z" rx="5" fill="#f5b544"/>
-              <path d="M25 119v46m18-46v46" stroke="#f5b544" stroke-width="6" stroke-linecap="round"/>
-            </g>
-            <g transform="translate(432 304) rotate(25)">
-              <path d="m0 6 8-6 22 22-6 8L0 6Z" fill="#bbc9ca"/>
-              <path d="m22 22 12-12 18 18-12 12-18-18Z" fill="#d9e1df"/>
-              <path d="m35 36 9-9 31 31-9 9-31-31Z" fill="#bbc9ca"/>
-            </g>
-            <path d="M122 132c9-18 24-32 43-41" stroke="#f5b544" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 12"/>
-            <circle cx="427" cy="191" r="5" fill="#f5b544"/>
-            <circle cx="119" cy="207" r="4" fill="#ed5c3e"/>
-          </svg>
-          <div class="art-label label-bottom"><span class="mini-gear">✳</span><span data-en="BIKE · CAR · MORE" data-te="బైక్ · కారు · మరిన్ని">BIKE · CAR · MORE</span></div>
-          <div class="art-sparkle sparkle-one">✳</div>
-          <div class="art-sparkle sparkle-two">✦</div>
+        <div class="hero-art">
+          <div class="hero-photo-card">
+            <img src="images/shop-front.jpg" alt="The Sri Sampath Vinayaka Auto Mobile Works shop in Sabbavaram" data-alt-en="The Sri Sampath Vinayaka Auto Mobile Works shop in Sabbavaram" data-alt-te="సబ్బవరంలోని శ్రీ సంపత్ వినాయక ఆటోమొబైల్ వర్క్స్ షాప్" fetchpriority="high" decoding="async">
+            <div class="hero-photo-badge"><span class="label-dot"></span><span data-en="OUR SHOP IN SABBAVARAM" data-te="సబ్బవరంలో మా షాప్">OUR SHOP IN SABBAVARAM</span></div>
+            <div class="hero-photo-caption">
+              <span class="mini-gear" aria-hidden="true">✳</span>
+              <span><strong data-en="Real people. Reliable vehicle care." data-te="నిజమైన సేవ. నమ్మకమైన వాహన సంరక్షణ.">Real people. Reliable vehicle care.</strong><small data-en="Sabbavaram to Chodavaram Road" data-te="సబ్బవరం నుండి చోడవరం రోడ్">Sabbavaram to Chodavaram Road</small></span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="hero-bottom">
@@ -264,23 +224,33 @@
       </div>
       <div class="photo-grid">
         <figure class="shop-photo shop-photo-wide">
-          <img src="images/shop-front.jpg" alt="Sri Sampath Vinayaka Auto Mobile Works shop front and signboard" loading="lazy" decoding="async">
+          <button class="photo-open" type="button" aria-label="View photo: our shop in Sabbavaram">
+            <img src="images/shop-front.jpg" alt="Sri Sampath Vinayaka Auto Mobile Works shop front and signboard" data-alt-en="Sri Sampath Vinayaka Auto Mobile Works shop front and signboard" data-alt-te="శ్రీ సంపత్ వినాయక ఆటోమొబైల్ వర్క్స్ షాప్ మరియు బోర్డు" loading="lazy" decoding="async">
+          </button>
           <figcaption data-en="Our shop in Sabbavaram" data-te="సబ్బవరంలో మా షాప్">Our shop in Sabbavaram</figcaption>
         </figure>
         <figure class="shop-photo">
-          <img src="images/shop-sign.jpg" alt="Sri Sampath Vinayaka Auto Mobile Works signboard" loading="lazy" decoding="async">
+          <button class="photo-open" type="button" aria-label="View photo: our shop signboard">
+            <img src="images/shop-sign.jpg" alt="Sri Sampath Vinayaka Auto Mobile Works signboard" data-alt-en="Sri Sampath Vinayaka Auto Mobile Works signboard" data-alt-te="శ్రీ సంపత్ వినాయక ఆటోమొబైల్ వర్క్స్ షాప్ బోర్డు" loading="lazy" decoding="async">
+          </button>
           <figcaption data-en="Our shop signboard" data-te="మా షాప్ బోర్డు">Our shop signboard</figcaption>
         </figure>
         <figure class="shop-photo">
-          <img src="images/workshop.jpg" alt="Vehicle repair and workshop area" loading="lazy" decoding="async">
+          <button class="photo-open" type="button" aria-label="View photo: workshop and vehicle service">
+            <img src="images/workshop.jpg" alt="Vehicle repair and workshop area" data-alt-en="Vehicle repair and workshop area" data-alt-te="వాహన మరమ్మతులు మరియు వర్క్‌షాప్ ప్రాంతం" loading="lazy" decoding="async">
+          </button>
           <figcaption data-en="Workshop &amp; vehicle service" data-te="వర్క్‌షాప్ &amp; వాహన సర్వీసింగ్">Workshop &amp; vehicle service</figcaption>
         </figure>
         <figure class="shop-photo">
-          <img src="images/oils-and-parts.jpg" alt="Oils, accessories and spare parts available in the shop" loading="lazy" decoding="async">
+          <button class="photo-open" type="button" aria-label="View photo: oils, accessories and parts">
+            <img src="images/oils-and-parts.jpg" alt="Oils, accessories and spare parts available in the shop" data-alt-en="Oils, accessories and spare parts available in the shop" data-alt-te="షాప్‌లో అందుబాటులో ఉన్న ఆయిల్స్, యాక్సెసరీస్ మరియు స్పేర్ పార్ట్స్" loading="lazy" decoding="async">
+          </button>
           <figcaption data-en="Oils, accessories &amp; parts" data-te="ఆయిల్స్, యాక్సెసరీస్ &amp; పార్ట్స్">Oils, accessories &amp; parts</figcaption>
         </figure>
         <figure class="shop-photo">
-          <img src="images/shop-stock.jpg" alt="Shop stock and vehicle supplies" loading="lazy" decoding="async">
+          <button class="photo-open" type="button" aria-label="View photo: shop stock and supplies">
+            <img src="images/shop-stock.jpg" alt="Shop stock and vehicle supplies" data-alt-en="Shop stock and vehicle supplies" data-alt-te="షాప్ స్టాక్ మరియు వాహన సామాగ్రి" loading="lazy" decoding="async">
+          </button>
           <figcaption data-en="Shop stock &amp; supplies" data-te="షాప్ స్టాక్ &amp; సామాగ్రి">Shop stock &amp; supplies</figcaption>
         </figure>
       </div>
@@ -342,5 +312,10 @@
       <span class="footer-copyright">© <span id="current-year"></span> Sri Sampath Vinayaka Auto Mobile Works</span>
     </div>
   </footer>
+  <dialog class="photo-viewer" id="photo-viewer" aria-labelledby="photo-viewer-caption">
+    <form method="dialog"><button class="photo-viewer-close" aria-label="Close photo viewer" data-aria-label-en="Close photo viewer" data-aria-label-te="ఫోటో వీక్షణను మూసివేయండి">×</button></form>
+    <img id="photo-viewer-image" alt="">
+    <p id="photo-viewer-caption"></p>
+  </dialog>
 </body>
 </html>
