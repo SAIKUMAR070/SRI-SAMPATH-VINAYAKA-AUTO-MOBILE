@@ -13,23 +13,22 @@
   const orderButton = document.querySelector("#order-submit");
   const orderResult = document.querySelector("#order-result");
   const whatsappFollowup = document.querySelector("#whatsapp-followup");
+  const categoryCards = [...document.querySelectorAll("[data-product-group]")];
   const products = [];
   const cart = new Map();
   let catalogueState = "loading";
   let catalogueError = "";
   let isSendingOrder = false;
+  let selectedProductGroup = "";
 
   const english = {
     loading: "Loading the product catalogue…",
-    connected: (count) => `${count} product${count === 1 ? "" : "s"} listed. Stock and prices are confirmed before an order is accepted.`,
+    connected: () => "Browse our products below or choose a category.",
     unconfigured: "The online catalogue is being set up. Contact us to ask about a product.",
-    failed: "We couldn’t load current stock. Please refresh the list or contact the shop.",
+    failed: "We couldn’t load the products. Please refresh the list or contact the shop.",
     empty: "We don’t have a matching listed item yet.",
     searchEmpty: "No listed products match your search.",
     ask: "Ask about this item",
-    unavailable: "Currently unavailable — contact us to check.",
-    available: "Listed in stock — final quantity to be confirmed.",
-    checkQuantity: (quantity) => `Listed stock: ${quantity} · confirmed before acceptance`,
     category: "All categories",
     priceUnknown: "Ask us for the price",
     add: "Add to request",
@@ -43,15 +42,12 @@
   };
   const telugu = {
     loading: "ఉత్పత్తుల జాబితాను లోడ్ చేస్తున్నాము…",
-    connected: (count) => `${count} ఉత్పత్తులు జాబితాలో ఉన్నాయి. ఆర్డర్ అంగీకరించే ముందు స్టాక్ మరియు ధరను నిర్ధారిస్తాము.`,
+    connected: () => "క్రింద ఉన్న ఉత్పత్తులను చూడండి లేదా ఒక వర్గాన్ని ఎంచుకోండి.",
     unconfigured: "ఆన్‌లైన్ ఉత్పత్తుల జాబితా సిద్ధమవుతోంది. ఉత్పత్తి గురించి అడగడానికి మమ్మల్ని సంప్రదించండి.",
-    failed: "ప్రస్తుత స్టాక్‌ను లోడ్ చేయలేకపోయాము. మళ్లీ ప్రయత్నించండి లేదా షాప్‌ను సంప్రదించండి.",
+    failed: "ఉత్పత్తులను లోడ్ చేయలేకపోయాము. మళ్లీ ప్రయత్నించండి లేదా షాప్‌ను సంప్రదించండి.",
     empty: "ఈ ఉత్పత్తి ప్రస్తుతం జాబితాలో లేదు.",
     searchEmpty: "మీ వెతుకులాటకు సరిపోయే ఉత్పత్తులు లేవు.",
     ask: "ఈ ఉత్పత్తి గురించి అడగండి",
-    unavailable: "ప్రస్తుతం అందుబాటులో లేదు — వివరాలకు మమ్మల్ని అడగండి.",
-    available: "స్టాక్ ఉందని జాబితాలో ఉంది — తుది పరిమాణాన్ని నిర్ధారిస్తాము.",
-    checkQuantity: (quantity) => `జాబితాలో స్టాక్: ${quantity} · ఆర్డర్ ముందు నిర్ధారిస్తాము`,
     category: "అన్ని వర్గాలు",
     priceUnknown: "ధర కోసం అడగండి",
     add: "అభ్యర్థనకు జోడించండి",
@@ -125,7 +121,24 @@
     return products.filter((product) => {
       const searchable = [product.name, product.brand, product.sku, product.category, product.vehicle_fit, product.description]
         .filter(Boolean).join(" ").toLocaleLowerCase();
-      return (!query || searchable.includes(query)) && (!category || product.category === category);
+      return (!query || searchable.includes(query))
+        && (!category || product.category === category)
+        && (!selectedProductGroup || productGroup(product) === selectedProductGroup);
+    });
+  }
+
+  function productGroup(product) {
+    const details = [product.name, product.brand, product.category, product.description]
+      .filter(Boolean).join(" ").toLocaleLowerCase();
+    if (/\bbatter(?:y|ies)\b/.test(details)) return "batteries";
+    if (/\boil\b|\boils\b|lubricant/.test(details)) return "oils";
+    if (/spare|parts|accessor/.test(details)) return "parts";
+    return "";
+  }
+
+  function renderCategoryCards() {
+    categoryCards.forEach((card) => {
+      card.setAttribute("aria-pressed", String(card.dataset.productGroup === selectedProductGroup));
     });
   }
 
@@ -183,13 +196,12 @@
         ? `<button class="button product-add" type="button" data-product-id="${escapeHtml(product.id)}">${escapeHtml(copy.add)}</button>`
         : `<a class="product-ask" href="https://wa.me/${String(config.whatsappNumber || "919573384280").replace(/\D/g, "")}?text=${encodeURIComponent(`Hello, is this item available? ${product.name}`)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy.ask)}</a>`;
       return `<article class="product-card">
-        <div class="product-photo-frame">${photo}<span class="stock-badge ${inStock ? "in-stock" : "out-of-stock"}">${inStock ? "● " + escapeHtml(copy.available) : "● " + escapeHtml(copy.unavailable)}</span></div>
+        <div class="product-photo-frame">${photo}</div>
         <div class="product-card-copy">
           <span class="product-category">${escapeHtml(product.category)}</span>
           <h3>${escapeHtml(product.name)}</h3>
           ${fit ? `<p class="product-fit">${escapeHtml(fit)}</p>` : ""}
           ${product.description ? `<p class="product-description">${escapeHtml(product.description)}</p>` : ""}
-          <p class="product-stock">${inStock ? escapeHtml(copy.checkQuantity(stock)) : escapeHtml(copy.unavailable)}</p>
           <div class="product-card-footer"><strong>${escapeHtml(price)}</strong>
             ${action}
           </div>
@@ -208,12 +220,13 @@
     });
 
     emptyState.classList.toggle("hidden", visible.length > 0);
+    renderCategoryCards();
     if (catalogueState === "ready") {
       const query = searchInput.value.trim();
       emptyState.querySelector("strong").textContent = products.length === 0
         ? copy.empty
         : query || categorySelect.value ? copy.searchEmpty : copy.empty;
-      setCatalogueStatus(copy.connected(products.length));
+      setCatalogueStatus(copy.connected());
     }
     updateContactLinks();
   }
@@ -388,8 +401,23 @@
     }
   }
 
-  searchInput.addEventListener("input", renderProducts);
-  categorySelect.addEventListener("change", renderProducts);
+  searchInput.addEventListener("input", () => {
+    selectedProductGroup = "";
+    renderProducts();
+  });
+  categorySelect.addEventListener("change", () => {
+    selectedProductGroup = "";
+    renderProducts();
+  });
+  categoryCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      selectedProductGroup = selectedProductGroup === card.dataset.productGroup ? "" : card.dataset.productGroup;
+      searchInput.value = "";
+      categorySelect.value = "";
+      renderProducts();
+      productGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
   document.querySelector("#catalogue-refresh").addEventListener("click", loadProducts);
   orderForm.addEventListener("submit", submitOrder);
   window.addEventListener("languagechange", () => {
