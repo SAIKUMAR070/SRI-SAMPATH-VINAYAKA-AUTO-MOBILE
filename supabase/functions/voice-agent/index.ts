@@ -1,4 +1,7 @@
-const allowedOrigin = "https://saikumar070.github.io";
+const allowedOrigins = new Set([
+  "https://saikumar070.github.io",
+  "https://sri-sampath-vinayaka-auto-mobile.pages.dev",
+]);
 const maxMessages = 8;
 const maxMessageLength = 500;
 const maxProducts = 150;
@@ -37,7 +40,7 @@ type ImageAttachment = {
 
 function isAllowedOrigin(origin: string | null): boolean {
   if (!origin) return false;
-  if (origin === allowedOrigin) return true;
+  if (allowedOrigins.has(origin)) return true;
   return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
 }
 
@@ -154,7 +157,7 @@ async function consumeRateLimit(
     console.error("Voice assistant rate-limit check failed.", response.status);
     throw new Error("Rate-limit service unavailable.");
   }
-  return response.json() === true;
+  return await response.json() === true;
 }
 
 async function loadProducts(supabaseUrl: string, anonKey: string): Promise<Product[]> {
