@@ -9,6 +9,8 @@
   const emptyState = document.querySelector("#catalogue-empty");
   const requestItems = document.querySelector("#request-items");
   const requestCount = document.querySelector("#request-count");
+  const headerCart = document.querySelector("#cart-link");
+  const headerCartCount = document.querySelector("#header-cart-count");
   const orderForm = document.querySelector("#order-form");
   const orderButton = document.querySelector("#order-submit");
   const orderResult = document.querySelector("#order-result");
@@ -239,6 +241,11 @@
     const copy = strings();
     const itemCount = cart.size;
     requestCount.textContent = copy.itemCount(itemCount);
+    headerCartCount.textContent = String(itemCount);
+    headerCart.setAttribute(
+      "aria-label",
+      document.documentElement.lang === "te" ? `కార్ట్, ${itemCount} ఉత్పత్తులు` : `Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}`
+    );
     orderButton.disabled = itemCount === 0 || !isConfigured() || isSendingOrder;
     if (cart.size === 0) {
       requestItems.innerHTML = `<p class="request-empty">${escapeHtml(copy.emptyCart)}</p>`;

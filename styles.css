@@ -38,6 +38,10 @@ svg { display: block; }
 .header-actions { display: flex; align-items: center; gap: 17px; }
 .language-button { border: 1px solid #45515d; border-radius: 8px; padding: 8px 12px; color: #f4f0e8; background: transparent; font-size: 11px; font-weight: 700; cursor: pointer; transition: border-color .2s, color .2s, background .2s; }
 .language-button:hover { border-color: var(--orange); color: var(--orange); }
+.header-cart { display: inline-flex; align-items: center; gap: 6px; color: #f4f0e8; font-size: 11px; font-weight: 700; }
+.header-cart:hover { color: var(--orange); }
+.header-cart svg { width: 17px; height: 17px; }
+.header-cart-count { min-width: 18px; height: 18px; display: inline-grid; place-items: center; padding: 0 5px; border-radius: 10px; background: var(--orange); color: var(--navy); font-size: 10px; }
 .header-call { display: inline-flex; align-items: center; gap: 8px; color: var(--orange); font-size: 12px; font-weight: 700; }
 .header-call svg { width: 15px; height: 15px; }
 .menu-button { display: none; background: none; border: 0; padding: 6px; }
@@ -362,6 +366,8 @@ h1 em, h2 em { color: var(--orange); font-style: normal; }
   .main-nav a { padding: 13px 4px; border-bottom: 1px solid #263545; font-size: 12px; }
   .header-actions { gap: 11px; }
   .language-button { padding: 7px 9px; font-size: 10px; }
+  .header-cart { gap: 3px; }
+  .header-cart-label { display: none; }
   .header-call { font-size: 0; gap: 0; }
   .header-call svg { width: 18px; height: 18px; }
   .menu-button { display: grid; gap: 4px; cursor: pointer; }
