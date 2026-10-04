@@ -390,7 +390,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
 
     for (let attempt = 0; attempt < 3; attempt += 1) {
       const geminiResponse = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
         {
           method: "POST",
           headers: {
@@ -404,13 +404,12 @@ Deno.serve(async (request: Request): Promise<Response> => {
             tool_config: {
               function_calling_config: {
                 mode: "AUTO",
-                allowed_function_names: ["search_products"],
               },
             },
             generationConfig: {
               temperature: 0.2,
               maxOutputTokens: 280,
-              thinkingConfig: { thinkingBudget: 0 },
+              thinkingConfig: { thinkingLevel: "low" },
             },
           }),
           signal: AbortSignal.timeout(20000),
