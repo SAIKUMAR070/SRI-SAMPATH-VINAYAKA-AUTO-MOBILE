@@ -162,10 +162,9 @@ h1 em, h2 em { color: var(--orange); font-style: normal; }
 .request-count { color: #737d83; font-size: 10px; font-weight: 700; }
 .request-items { display: grid; gap: 8px; margin-top: 16px; }
 .request-empty { color: #7b858c; font-size: 11px; }
-.request-row { display: grid; grid-template-columns: minmax(0, 1fr) 105px 32px; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #eeede8; }
-.request-product-name { overflow-wrap: anywhere; font-size: 11px; font-weight: 700; }
-.request-quantity { display: flex; align-items: center; gap: 5px; color: #6e7980; font-size: 9px; }
-.request-quantity input { width: 57px; height: 33px; padding: 4px; border: 1px solid #deded8; font: inherit; }
+.request-row { display: grid; grid-template-columns: minmax(0, 1fr) 32px; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #eeede8; }
+.request-product-name { display: grid; gap: 4px; overflow-wrap: anywhere; font-size: 11px; font-weight: 700; }
+.request-product-name small { color: #6e7980; font-size: 10px; font-weight: 400; }
 .remove-request { width: 31px; height: 31px; border: 1px solid #e4e1d8; background: white; color: #8c4a38; font-size: 17px; cursor: pointer; }
 .order-form { margin-top: 17px; }
 .order-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }

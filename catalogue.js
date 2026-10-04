@@ -106,7 +106,7 @@
   }
 
   function updateContactLinks() {
-    const number = String(config.whatsappNumber || "919573384280").replace(/\D/g, "");
+    const number = String(config.whatsappNumber || "916303263803").replace(/\D/g, "");
     document.querySelectorAll("[data-whatsapp-link]").forEach((link) => {
       const search = document.querySelector("#catalogue-search").value.trim();
       const template = link.dataset.whatsappMessage || "Hello, I want to ask about a product.";
@@ -131,7 +131,7 @@
     const details = [product.name, product.brand, product.category, product.description]
       .filter(Boolean).join(" ").toLocaleLowerCase();
     if (/\bbatter(?:y|ies)\b/.test(details)) return "batteries";
-    if (/\boil\b|\boils\b|lubricant/.test(details)) return "oils";
+    if (/\boils?\b|lubricant|coolant|antifreeze|hydraulic|brake|gear|transmission|\btq\b/.test(details)) return "oils";
     if (/spare|parts|accessor/.test(details)) return "parts";
     return "";
   }
@@ -164,7 +164,11 @@
     if (document.documentElement.lang !== "te") return category;
     const translated = {
       "engine oil": "ఇంజిన్ ఆయిల్",
+      coolant: "కూలెంట్",
+      tq: "టీక్యూ",
       "hydraulic oil": "హైడ్రాలిక్ ఆయిల్",
+      "hydraulic brake oil": "హైడ్రాలిక్ బ్రేక్ ఆయిల్",
+      "gear oil": "గేర్ ఆయిల్",
       "two-wheeler spare parts": "బైక్ విడిభాగాలు",
       "car spare parts": "కారు విడిభాగాలు",
       accessories: "యాక్సెసరీస్",
@@ -194,7 +198,7 @@
       const fit = [product.brand, product.vehicle_fit].filter(Boolean).join(" · ");
       const action = inStock
         ? `<button class="button product-add" type="button" data-product-id="${escapeHtml(product.id)}">${escapeHtml(copy.add)}</button>`
-        : `<a class="product-ask" href="https://wa.me/${String(config.whatsappNumber || "919573384280").replace(/\D/g, "")}?text=${encodeURIComponent(`Hello, is this item available? ${product.name}`)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy.ask)}</a>`;
+        : `<a class="product-ask" href="https://wa.me/${String(config.whatsappNumber || "916303263803").replace(/\D/g, "")}?text=${encodeURIComponent(`Hello, is this item available? ${product.name}`)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy.ask)}</a>`;
       return `<article class="product-card">
         <div class="product-photo-frame">${photo}</div>
         <div class="product-card-copy">
@@ -233,7 +237,7 @@
 
   function renderRequest() {
     const copy = strings();
-    const itemCount = [...cart.values()].reduce((count, item) => count + item.quantity, 0);
+    const itemCount = cart.size;
     requestCount.textContent = copy.itemCount(itemCount);
     orderButton.disabled = itemCount === 0 || !isConfigured() || isSendingOrder;
     if (cart.size === 0) {
@@ -241,23 +245,11 @@
       updateContactLinks();
       return;
     }
-    requestItems.innerHTML = [...cart.values()].map(({ product, quantity }) => `
+    requestItems.innerHTML = [...cart.values()].map(({ product }) => `
       <div class="request-row">
-        <span class="request-product-name">${escapeHtml(product.name)}</span>
-        <label class="request-quantity"><span>${document.documentElement.lang === "te" ? "పరిమాణం" : "Qty"}</span>
-          <input type="number" min="1" max="${Math.min(99, Number(product.stock_quantity))}" value="${quantity}" inputmode="numeric" data-cart-quantity="${escapeHtml(product.id)}" aria-label="Quantity of ${escapeHtml(product.name)}">
-        </label>
+        <span class="request-product-name">${escapeHtml(product.name)}${product.brand ? `<small>${escapeHtml(product.brand)}</small>` : ""}</span>
         <button class="remove-request" type="button" data-remove-id="${escapeHtml(product.id)}" aria-label="Remove ${escapeHtml(product.name)}">×</button>
       </div>`).join("");
-    requestItems.querySelectorAll("[data-cart-quantity]").forEach((input) => {
-      input.addEventListener("change", () => {
-        const entry = cart.get(input.dataset.cartQuantity);
-        if (!entry) return;
-        const max = Math.min(99, Number(entry.product.stock_quantity));
-        entry.quantity = Math.max(1, Math.min(max, Number.parseInt(input.value, 10) || 1));
-        renderRequest();
-      });
-    });
     requestItems.querySelectorAll("[data-remove-id]").forEach((button) => {
       button.addEventListener("click", () => {
         cart.delete(button.dataset.removeId);
@@ -269,13 +261,8 @@
 
   function addToRequest(productId) {
     const product = products.find((item) => item.id === productId);
-    if (!product || Number(product.stock_quantity) <= 0) return;
-    const current = cart.get(productId);
-    if (current) {
-      current.quantity = Math.min(Number(product.stock_quantity), 99, current.quantity + 1);
-    } else {
-      cart.set(productId, { product, quantity: 1 });
-    }
+    if (!product || Number(product.stock_quantity) <= 0 || cart.has(productId)) return;
+    cart.set(productId, { product, quantity: 1 });
     renderRequest();
     const button = productGrid.querySelector(`[data-product-id="${CSS.escape(productId)}"]`);
     if (button) {
@@ -334,8 +321,8 @@
   }
 
   function updateWhatsAppFollowup(name, phone, message, items, orderId) {
-    const number = String(config.whatsappNumber || "919573384280").replace(/\D/g, "");
-    const itemSummary = items.map(({ product, quantity }) => `${product.name} × ${quantity}`).join(", ");
+    const number = String(config.whatsappNumber || "916303263803").replace(/\D/g, "");
+    const itemSummary = items.map(({ product }) => `${product.name}${product.brand ? ` (${product.brand})` : ""}`).join(", ");
     const text = [
       "Hello, I just sent an order request on your website.",
       `Request reference: ${orderId}`,
