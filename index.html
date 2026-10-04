@@ -17,6 +17,7 @@
   <script src="site-background.js" defer></script>
   <script src="script.js" defer></script>
   <script src="catalogue.js" defer></script>
+  <script src="voice-agent.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -346,5 +347,43 @@
     <img id="photo-viewer-image" alt="">
     <p id="photo-viewer-caption"></p>
   </dialog>
+  <div class="voice-assistant">
+    <button class="voice-launcher" id="voice-launcher" type="button" aria-expanded="false" aria-controls="voice-panel" aria-label="Open shop voice assistant" data-aria-label-en="Open shop voice assistant" data-aria-label-te="షాప్ వాయిస్ అసిస్టెంట్‌ను తెరవండి">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 10.5v.7a5.5 5.5 0 0 0 11 0v-.7M12 17v4m-3 0h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span data-en="Ask our assistant" data-te="మా అసిస్టెంట్‌ను అడగండి">Ask our assistant</span>
+    </button>
+    <section class="voice-panel hidden" id="voice-panel" role="dialog" aria-labelledby="voice-title" aria-modal="false">
+      <header class="voice-panel-header">
+        <div class="voice-heading">
+          <span class="voice-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 10.5v.7a5.5 5.5 0 0 0 11 0v-.7M12 17v4m-3 0h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span><strong id="voice-title" data-en="Shop voice assistant" data-te="షాప్ వాయిస్ అసిస్టెంట్">Shop voice assistant</strong><small data-en="Ask about our products and shop" data-te="మా ఉత్పత్తులు మరియు షాప్ గురించి అడగండి">Ask about our products and shop</small></span>
+        </div>
+        <button class="voice-close" id="voice-close" type="button" aria-label="Close assistant" data-aria-label-en="Close assistant" data-aria-label-te="అసిస్టెంట్‌ను మూసివేయండి">×</button>
+      </header>
+      <div class="voice-messages" id="voice-messages" role="log" aria-live="polite" aria-relevant="additions text"></div>
+      <p class="voice-status" id="voice-status" role="status" aria-live="polite"></p>
+      <p class="voice-privacy" data-en="Voice recognition uses your browser. Your question is sent to Gemini. Don’t share personal or payment details." data-te="వాయిస్ గుర్తింపు మీ బ్రౌజర్ ద్వారా జరుగుతుంది. మీ ప్రశ్న Geminiకి పంపబడుతుంది. వ్యక్తిగత లేదా చెల్లింపు వివరాలను పంచుకోవద్దు.">Voice recognition uses your browser. Your question is sent to Gemini. Don’t share personal or payment details.</p>
+      <div class="voice-suggestions" aria-label="Suggested questions" data-aria-label-en="Suggested questions" data-aria-label-te="సూచించిన ప్రశ్నలు">
+        <button type="button" data-voice-prompt data-en="Find engine oil" data-te="ఇంజిన్ ఆయిల్ చూపించండి">Find engine oil</button>
+        <button type="button" data-voice-prompt data-en="Find a battery" data-te="బ్యాటరీ చూపించండి">Find a battery</button>
+        <button type="button" data-voice-prompt data-en="Where is the shop?" data-te="షాప్ ఎక్కడ ఉంది?">Where is the shop?</button>
+      </div>
+      <form class="voice-form" id="voice-form">
+        <label class="sr-only" for="voice-input" data-en="Ask a question" data-te="ప్రశ్న అడగండి">Ask a question</label>
+        <textarea id="voice-input" rows="2" maxlength="500" placeholder="Ask about products, price or location…" data-placeholder-en="Ask about products, price or location…" data-placeholder-te="ఉత్పత్తులు, ధర లేదా చిరునామా గురించి అడగండి…" required></textarea>
+        <div class="voice-controls">
+          <button class="voice-tool-button" id="voice-microphone" type="button" aria-label="Speak your question" data-aria-label-en="Speak your question" data-aria-label-te="మీ ప్రశ్నను మాట్లాడండి">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 10.5v.7a5.5 5.5 0 0 0 11 0v-.7M12 17v4m-3 0h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <button class="voice-tool-button voice-speech-toggle" id="voice-speech-toggle" type="button" aria-pressed="true" aria-label="Turn spoken replies off" data-aria-label-en="Turn spoken replies off" data-aria-label-te="వాయిస్ సమాధానాలను ఆపండి">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M17 9a4 4 0 0 1 0 6m2.5-8.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <button class="voice-send" id="voice-send" type="submit" data-en="Send" data-te="పంపండి">Send</button>
+        </div>
+      </form>
+    </section>
+  </div>
 </body>
 </html>

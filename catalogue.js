@@ -275,6 +275,25 @@
     requestItems.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
+  window.addEventListener("voice-agent:add-product", (event) => {
+    const detail = event.detail;
+    const product = products.find((item) => item.id === detail?.productId);
+    if (!product) {
+      detail?.onResult?.({ success: false, reason: "unavailable" });
+      return;
+    }
+    if (Number(product.stock_quantity) <= 0) {
+      detail?.onResult?.({ success: false, reason: "out-of-stock", name: product.name });
+      return;
+    }
+    if (cart.has(product.id)) {
+      detail?.onResult?.({ success: true, alreadyAdded: true, name: product.name });
+      return;
+    }
+    addToRequest(product.id);
+    detail?.onResult?.({ success: true, name: product.name });
+  });
+
   async function loadProducts() {
     if (!isConfigured()) {
       catalogueState = "unconfigured";
