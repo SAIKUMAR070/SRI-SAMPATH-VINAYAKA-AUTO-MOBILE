@@ -310,8 +310,16 @@ h1 em, h2 em { color: var(--orange); font-style: normal; }
 .voice-form { padding: 10px 12px 12px; border-top: 1px solid #e8e7e1; }
 .voice-form textarea { width: 100%; min-height: 52px; max-height: 110px; resize: vertical; padding: 10px 11px; border: 1px solid #deded8; border-radius: 8px; background: #fff; color: var(--ink); font: inherit; font-size: 12px; line-height: 1.5; }
 .voice-form textarea:focus { outline: 2px solid #e1b24f; outline-offset: 1px; }
+.voice-image-input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+.voice-image-preview { display: flex; align-items: center; gap: 9px; margin-top: 8px; padding: 6px 8px; border: 1px solid #e3e1d8; border-radius: 8px; background: #fff; }
+.voice-image-preview.hidden { display: none; }
+.voice-image-preview img { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 5px; object-fit: cover; }
+.voice-image-preview span { min-width: 0; overflow: hidden; color: #536273; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.voice-image-remove { width: 28px; height: 28px; flex: 0 0 28px; margin-left: auto; border: 1px solid #e3e1d8; border-radius: 6px; background: #fff; color: #536273; font-size: 18px; cursor: pointer; }
+.voice-message-image { display: block; max-width: min(220px, 100%); max-height: 190px; margin-top: 8px; border-radius: 7px; object-fit: contain; }
 .voice-controls { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
 .voice-tool-button { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #e3e1d8; border-radius: 8px; background: #fff; color: #425263; cursor: pointer; }
+.voice-photo-button { width: auto; min-width: 76px; display: inline-flex; gap: 5px; padding: 0 8px; font-size: 10px; }
 .voice-tool-button:hover, .voice-tool-button[aria-pressed="true"] { border-color: #d8c18f; background: #fff8e9; color: #80570f; }
 .voice-tool-button svg { width: 19px; height: 19px; }
 .voice-tool-button:disabled { cursor: not-allowed; opacity: .55; }
