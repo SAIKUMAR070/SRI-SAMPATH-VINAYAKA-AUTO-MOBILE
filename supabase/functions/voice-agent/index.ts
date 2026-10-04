@@ -417,7 +417,8 @@ Deno.serve(async (request: Request): Promise<Response> => {
         },
       );
       if (!geminiResponse.ok) {
-        console.error("Gemini request failed.", geminiResponse.status);
+        const errorBody = await geminiResponse.text();
+        console.error("Gemini request failed.", geminiResponse.status, errorBody.slice(0, 1000));
         return errorResponse("The assistant could not answer just now.", 502, requestOrigin);
       }
 
