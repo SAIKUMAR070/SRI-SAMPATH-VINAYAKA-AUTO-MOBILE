@@ -388,37 +388,64 @@ Deno.serve(async (request: Request): Promise<Response> => {
     }];
     let reply = "";
 
+    const geminiModels = ["gemini-3.8-flash", "gemini-3.7-flash"];
     for (let attempt = 0; attempt < 3; attempt += 1) {
-      const geminiResponse = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": geminiApiKey,
-          },
-          body: JSON.stringify({
-            system_instruction: { parts: [{ text: systemInstruction }] },
-            contents,
-            tools,
-            tool_config: {
-              function_calling_config: {
-                mode: "AUTO",
+      let geminiResponse: Response | null = null;
+      for (const model of geminiModels) {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": geminiApiKey,
+            },
+            body: JSON.stringify({
+              system_instruction: { parts: [{ text: systemInstruction }] },
+              contents,
+              tools,
+              tool_config: {
+                function_calling_config: {
+                  mode: "AUTO",
+                },
               },
-            },
-            generationConfig: {
-              temperature: 0.2,
-              maxOutputTokens: 280,
-              thinkingConfig: { thinkingLevel: "low" },
-            },
-          }),
-          signal: AbortSignal.timeout(20000),
-        },
-      );
-      if (!geminiResponse.ok) {
-        const errorBody = await geminiResponse.text();
-        console.error("Gemini request failed.", geminiResponse.status, errorBody.slice(0, 1000));
-        return errorResponse("The assistant could not answer just now.", 502, requestOrigin);
+              generationConfig: {
+                temperature: 0.2,
+                maxOutputTokens: 280,
+                thinkingConfig: { thinkingLevel: "low" },
+              },
+            }),
+            signal: AbortSignal.timeout(20000),
+          },
+        );
+        if (response.ok) {
+          geminiResponse = response;
+          break;
+        }
+
+        const errorBody = await response.text();
+        console.error(`Gemini request failed for ${model}.`, response.status, errorBody.slice(0, 1000));
+        const isTemporaryFailure = [429, 500, 502, 503, 504].includes(response.status);
+        if (!isTemporaryFailure) {
+          return errorResponse("The assistant could not answer just now.", 502, requestOrigin);
+        }
+        if (model === geminiModels.at(-1)) break;
+      }
+      if (!geminiResponse) {
+        const latestQuestion = messages.at(-1)?.text ?? "";
+        const matches = searchProducts(products, latestQuestion);
+        if (matches.length === 0) {
+          return errorResponse("The assistant is temporarily unavailable. Please try again shortly.", 503, requestOrigin);
+        }
+
+        const fallbackProducts = matches.map(toProductSuggestion);
+        const productList = fallbackProducts
+          .map((product) => `${product.name}${product.brand ? ` (${product.brand})` : ""}`)
+          .join(", ");
+        return jsonResponse({
+          reply: `The AI assistant is temporarily unavailable, but I found these matching catalogue items: ${productList}. Listed prices are not available; please call the shop to confirm current stock and price.`,
+          products: fallbackProducts,
+        }, 200, requestOrigin);
       }
 
       const result = await geminiResponse.json();
