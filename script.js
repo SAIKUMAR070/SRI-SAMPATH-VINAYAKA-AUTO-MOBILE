@@ -1,6 +1,22 @@
 const languageToggle = document.querySelector("#language-toggle");
 const menuToggle = document.querySelector("#menu-toggle");
 const navigation = document.querySelector(".main-nav");
+const heroBackgroundVideo = document.querySelector(".hero-background-video");
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function syncHeroBackgroundVideo() {
+  if (reducedMotion.matches) {
+    heroBackgroundVideo.pause();
+    return;
+  }
+
+  heroBackgroundVideo.play().catch((error) => {
+    console.error("The hero background video could not play.", error);
+  });
+}
+
+syncHeroBackgroundVideo();
+reducedMotion.addEventListener("change", syncHeroBackgroundVideo);
 
 function setLanguage(language) {
   const isTelugu = language === "te";
